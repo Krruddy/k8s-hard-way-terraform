@@ -1,13 +1,5 @@
-terraform {
-  required_providers {
-    vault = {
-      source = "hashicorp/vault"
-      version = "5.0.0"
-    }
-  }
-}
-
 provider "vault" {
+  address = var.vault_addr
   auth_login {
     path = "auth/approle/login"
     parameters = {
@@ -15,4 +7,9 @@ provider "vault" {
        secret_id = var.vault_secret_id
     }
   }
+}
+
+provider "proxmox" {
+  endpoint  = var.proxmox_endpoint
+  api_token = ephemeral.vault_kv_secret_v2.proxmox_creds.terraform_api_token
 }
