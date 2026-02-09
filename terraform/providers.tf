@@ -11,5 +11,6 @@ provider "vault" {
 
 provider "proxmox" {
   endpoint  = var.proxmox_endpoint
-  api_token = ephemeral.vault_kv_secret_v2.proxmox_creds.terraform_api_token
+  api_token = ephemeral.vault_kv_secret_v2.proxmox_creds.data["terraform_api_token"]
+  insecure  = true
 }
