@@ -63,7 +63,32 @@ variable "k8s_gateway_memory" {
   default = 4096
 }
 
-# --- Worker Node Variables ---
+# --- Kubernetes Controller Node Variables ---
+
+variable "k8s_ctrl_id_start" {
+  description = "Starting VM ID for controller nodes"
+  type        = number
+}
+
+variable "k8s_ctrl_count" {
+  description = "Number of controller nodes"
+  type        = number
+  default     = 3
+}
+
+variable "k8s_ctrl_cpu_cores" {
+  description = "CPU cores for controller nodes"
+  type        = number
+  default     = 2
+}
+
+variable "k8s_ctrl_memory" {
+  description = "Memory (MB) for controller nodes"
+  type        = number
+  default     = 4096
+}
+
+# --- Kubernetes Worker Node Variables ---
 
 variable "k8s_wkr_id_start" {
   description = "Starting VM ID for worker nodes"
