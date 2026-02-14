@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_vm" "controller" {
+resource "proxmox_virtual_environment_vm" "controllers" {
   count     = var.k8s_ctrl_count
   name      = "k8s-ctrl-${count.index + 1}"
   node_name = var.proxmox_name

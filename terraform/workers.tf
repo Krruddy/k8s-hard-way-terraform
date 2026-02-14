@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_vm" "worker" {
+resource "proxmox_virtual_environment_vm" "workers" {
   count     = var.k8s_wkr_count
   name      = "k8s-wkr-${count.index + 1}"
   node_name = var.proxmox_name
