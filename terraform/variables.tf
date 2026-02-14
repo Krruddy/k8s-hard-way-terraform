@@ -51,6 +51,24 @@ variable "k8s_gateway_vm_id" {
   type        = number
 }
 
+variable "k8s_gateway_wan_ip" {
+  description = "The static IP address reserved for the Kubernetes gateway node on the home network"
+  type        = string
+  default     = "192.168.1.200/24"
+}
+
+variable "k8s_gateway_wan_mac_address" {
+  description = "The MAC address for the Kubernetes gateway node's WAN interface"
+  type        = string
+  default     = "BC:24:11:00:00:01"
+}
+
+variable "k8s_gateway_ip" {
+  description = "The static IP address for the Kubernetes gateway node"
+  type        = string
+  default     = "10.0.0.254/24"
+}
+
 variable "k8s_gateway_cpu_cores" { 
   description = "Number of CPU cores for the Kubernetes gateway node" 
   type = number 

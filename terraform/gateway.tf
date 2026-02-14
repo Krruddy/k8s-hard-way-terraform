@@ -25,6 +25,7 @@ resource "proxmox_virtual_environment_vm" "gateway" {
   network_device {
     bridge = "vmbr0"
     model  = "virtio"
+    mac_address = var.k8s_gateway_wan_mac_address
   }
 
   network_device {
@@ -45,7 +46,7 @@ resource "proxmox_virtual_environment_vm" "gateway" {
       # Cluster Network (Internal)
       ip_config {
         ipv4 {
-          address = "10.0.0.254/24"
+          address = var.k8s_gateway_ip
         }
       }
       
