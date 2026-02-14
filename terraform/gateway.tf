@@ -1,5 +1,5 @@
 resource "proxmox_virtual_environment_vm" "gateway" {
-  name      = "k8s-gateway"
+  name      = "k8s-gw"
   node_name = var.proxmox_name
   vm_id     = var.k8s_gateway_vm_id
 
