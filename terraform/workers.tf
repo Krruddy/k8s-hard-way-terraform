@@ -24,7 +24,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
   }
 
   network_device {
-    bridge = "vmbr0"
+    bridge = "vmbr1"
     model  = "virtio"
   }
 
