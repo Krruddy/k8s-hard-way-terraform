@@ -1,6 +1,6 @@
 resource "proxmox_virtual_environment_vm" "controller" {
   count     = var.k8s_ctrl_count
-  name      = "k8s-ctrl-${count.index}"
+  name      = "k8s-ctrl-${count.index + 1}"
   node_name = var.proxmox_name
   vm_id     = var.k8s_ctrl_id_start + count.index
 
@@ -31,7 +31,10 @@ resource "proxmox_virtual_environment_vm" "controller" {
     datastore_id = var.proxmox_storage
 
     ip_config {
-      ipv4 { address = "${cidrhost("10.0.0.0/24", count.index)}/24" }
+      ipv4 {
+        address = "${cidrhost("10.0.0.0/24", 1 + count.index)}/24" 
+        gateway = "10.0.0.254"
+      }
     }
 
     user_account {

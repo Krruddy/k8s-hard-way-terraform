@@ -1,6 +1,6 @@
 resource "proxmox_virtual_environment_vm" "worker" {
   count     = var.k8s_wkr_count
-  name      = "k8s-wkr-${count.index}"
+  name      = "k8s-wkr-${count.index + 1}"
   node_name = var.proxmox_name
   vm_id     = var.k8s_wkr_id_start + count.index
 
@@ -32,7 +32,10 @@ resource "proxmox_virtual_environment_vm" "worker" {
     datastore_id = var.proxmox_storage
 
     ip_config {
-      ipv4 { address = "${cidrhost("10.0.0.0/24", 20 + count.index)}/24" }
+      ipv4 { 
+        address = "${cidrhost("10.0.0.0/24", 21 + count.index)}/24" 
+        gateway = "10.0.0.254"
+      }
     }
 
     user_account {
