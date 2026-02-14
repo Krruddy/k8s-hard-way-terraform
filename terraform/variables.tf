@@ -1,3 +1,5 @@
+# --- Vault Variables ---
+
 variable "vault_addr" {
   type = string
   description = "The address of the Vault server"
@@ -12,6 +14,8 @@ variable "vault_secret_id" {
   type = string
   description = "The Secret ID for Vault AppRole authentication."
 }
+
+# --- Proxmox Variables ---
 
 variable "proxmox_endpoint" {
   description = "The URL of the Proxmox API endpoint"
@@ -28,8 +32,22 @@ variable "proxmox_storage" {
   type        = string
 }
 
+# --- General VM Variables ---
+
 variable "template_vm_id" {
-  description = "The VM ID of the Cloud-Init Template to clone (e.g., 9000)"
+  description = "The VM ID of the Cloud-Init Template to clone"
+  type        = number
+}
+
+variable "ssh_public_key" { 
+  description = "The SSH public key to be added to the VMs for access"
+  type = string
+}
+
+# --- Kubernetes Gateway Node Variables ---
+
+variable "k8s_gateway_vm_id" {
+  description = "The VM ID for the Kubernetes gateway node"
   type        = number
 }
 
@@ -38,17 +56,34 @@ variable "k8s_gateway_cpu_cores" {
   type = number 
   default = 2
 }
+
 variable "k8s_gateway_memory" {
   description = "Amount of memory (in MB) for the Kubernetes gateway node"
   type = number
   default = 4096
 }
-variable "k8s_gateway_vm_id" {
-  description = "The VM ID for the Kubernetes gateway node"
+
+# --- Worker Node Variables ---
+
+variable "k8s_wkr_id_start" {
+  description = "Starting VM ID for worker nodes"
   type        = number
 }
 
-variable "ssh_public_key" { 
-  description = "The SSH public key to be added to the VMs for access"
-  type = string
+variable "k8s_wkr_count" {
+  description = "Number of worker nodes"
+  type        = number
+  default     = 3
+}
+
+variable "k8s_wkr_cpu_cores" {
+  description = "CPU cores for worker nodes"
+  type        = number
+  default     = 2
+}
+
+variable "k8s_wkr_memory" {
+  description = "Memory (MB) for worker nodes"
+  type        = number
+  default     = 2048
 }
