@@ -2,7 +2,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
   count     = var.k8s_wkr_count
   name      = "k8s-wkr-${count.index + 1}"
   node_name = var.proxmox_name
-  vm_id     = var.k8s_wkr_id_start + count.index
+  vm_id     = var.k8s_wkr_id_start + count.index + 1
 
   clone {
     vm_id = var.template_vm_id

@@ -2,7 +2,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   count     = var.k8s_ctrl_count
   name      = "k8s-ctrl-${count.index + 1}"
   node_name = var.proxmox_name
-  vm_id     = var.k8s_ctrl_id_start + count.index
+  vm_id     = var.k8s_ctrl_id_start + count.index + 1
 
   clone {
     vm_id = var.template_vm_id
