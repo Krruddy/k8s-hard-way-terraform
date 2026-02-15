@@ -1,0 +1,41 @@
+users:
+  - name: dev
+    gecos: "Platform Engineer Shared Account"
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+
+  - name: ansible
+    gecos: "Ansible's Account"
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+
+write_files:
+  # The Trusted CA Key
+  - path: /etc/ssh/trusted-user-ca-keys.pem
+    content: |
+      ${trusted_ca_key}
+    owner: root:root
+    permissions: '0644'
+
+  # Mapping for 'dev' (Injected via Terraform)
+  - path: /etc/ssh/auth_principals/dev
+    content: |
+      ${dev_principal}
+    owner: root:root
+    permissions: '0644'
+
+  # Mapping for 'ansible' (Injected via Terraform)
+  - path: /etc/ssh/auth_principals/ansible
+    content: |
+      ${ansible_principal}
+    owner: root:root
+    permissions: '0644'
+
+runcmd:
+  - echo "TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem" >> /etc/ssh/sshd_config
+  - echo "AuthorizedPrincipalsFile /etc/ssh/auth_principals/%u" >> /etc/ssh/sshd_config
+  - systemctl restart ssh
