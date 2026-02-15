@@ -39,7 +39,7 @@ variable "template_vm_id" {
   type        = number
 }
 
-variable "ssh_public_key" { 
+variable "ssh_public_key_file" {
   description = "The SSH public key to be added to the VMs for access"
   type = string
 }

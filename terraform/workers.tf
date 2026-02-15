@@ -38,6 +38,9 @@ resource "proxmox_virtual_environment_vm" "workers" {
       }
     }
 
-    user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
+    user_account {
+      username = "admin"
+      keys     = [file(var.ssh_public_key_file)]
+    }
   }
 }
