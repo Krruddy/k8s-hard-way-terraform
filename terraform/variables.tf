@@ -49,9 +49,21 @@ variable "template_vm_id" {
   type        = number
 }
 
-variable "ssh_public_key_file" {
-  description = "The SSH public key to be added to the VMs for access"
+variable "admin_ssh_public_key_path" {
+  description = "Path to the public key used for the break-glass admin user"
   type = string
+}
+
+variable "ssh_principal_ansible" {
+  description = "The SSH Certificate Principal used for Ansible automation identity"
+  type        = string
+  default     = "ansible"
+}
+
+variable "ssh_principal_dev" {
+  description = "The SSH Certificate Principal used for the Developer Team identity"
+  type        = string
+  default     = "dev-team"
 }
 
 # --- Kubernetes Gateway Node Variables ---
