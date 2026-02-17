@@ -2,6 +2,7 @@ resource "proxmox_virtual_environment_vm" "gateway" {
   name      = "k8s-gw"
   node_name = var.proxmox_name
   vm_id     = var.k8s_gateway_vm_id
+  pool_id = var.proxmox_pool
 
   clone {
     vm_id = var.template_vm_id
