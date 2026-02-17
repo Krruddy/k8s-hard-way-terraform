@@ -32,6 +32,16 @@ variable "proxmox_storage" {
   type        = string
 }
 
+variable "proxmox_snippet_storage" {
+  description = "The name of the Proxmox storage pool for snippets"
+  type        = string
+}
+
+variable "proxmox_pool" {
+  description = "Resource Pool for the Kubernetes Cluster"
+  type        = string
+}
+
 # --- General VM Variables ---
 
 variable "template_vm_id" {
