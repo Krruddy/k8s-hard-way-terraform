@@ -1,0 +1,96 @@
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+
+# ---------------------------------------------------------
+# Flush existing rules
+# ---------------------------------------------------------
+
+- name: Set default policy to ACCEPT before flushing
+  ansible.builtin.iptables:
+    chain: INPUT
+    policy: ACCEPT
+    
+- name: Flush existing rules
+  ansible.builtin.iptables:
+    chain: "{{ item.chain }}"
+    table: "{{ item.table }}"
+    flush: true
+  loop:
+    - { table: 'filter', chain: 'INPUT' }
+    - { table: 'filter', chain: 'FORWARD' }
+    - { table: 'nat',    chain: 'POSTROUTING' }
+
+# ---------------------------------------------------------
+# INPUT CHAIN
+# ---------------------------------------------------------
+
+- name: Early drop of invalid connections
+  ansible.builtin.iptables:
+    chain: INPUT
+    ctstate: INVALID
+    jump: DROP
+    comment: Early drop of invalid connections
+
+- name: Allow Loopback (Localhost)
+  ansible.builtin.iptables:
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+    comment: Allow from loopback
+
+- name: Allow Established/Related (Input)
+  ansible.builtin.iptables:
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    comment: allow tracked connections
+
+- name: Allow SSH
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 22
+    jump: ACCEPT
+    comment: "Allow sshd"
+
+- name: Allow ICMP
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: icmp
+    jump: ACCEPT
+    comment: "Allow icmp"
+
+- name: Allow Internal Cluster Traffic
+  ansible.builtin.iptables:
+    chain: INPUT
+    source: "10.0.0.0/24"
+    jump: ACCEPT
+
+- name: Set INPUT policy to DROP
+  ansible.builtin.iptables:
+    chain: INPUT
+    policy: DROP
+
+# ---------------------------------------------------------
+# FORWARD CHAIN
+# ---------------------------------------------------------
+
+- name: Set FORWARD policy to ACCEPT
+  ansible.builtin.iptables:
+    chain: FORWARD
+    policy: ACCEPT
+
+# ---------------------------------------------------------
+# Save State
+# ---------------------------------------------------------
+
+- name: Save current state of the firewall in system file
+  community.general.iptables_state:
+    ip_version: ipv4
+    state: saved
+    path: /etc/iptables/rules.v4
