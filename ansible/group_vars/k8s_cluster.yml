@@ -1,0 +1,6 @@
+---
+# `-W host:port`: Forwarding mode with target host and port.
+# `-q`: Quiet mode to suppress non-error messages.
+# `-i`: Identity file for authentication (the ephemeral SSH key).
+ansible_ssh_common_args: >-
+  -o ProxyCommand="ssh -W %h:%p -q -i {{ lookup('env', 'ANSIBLE_PRIVATE_KEY_FILE') }} {{ ansible_user }}@{{ hostvars['k8s-gw']['ansible_host'] }}"

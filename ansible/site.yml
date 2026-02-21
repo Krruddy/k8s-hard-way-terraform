@@ -1,0 +1,7 @@
+# ==========================================
+# 1. Common Configuration (Run on ALL nodes)
+# ==========================================
+- name: Ping all hosts to verify connectivity
+  hosts: all
+  roles:
+    - ping
