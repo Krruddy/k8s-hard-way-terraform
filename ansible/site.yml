@@ -1,7 +1,17 @@
 # ==========================================
-# 1. Common Configuration (Run on ALL nodes)
+# 1. Common Configuration
 # ==========================================
-- name: Ping all hosts to verify connectivity
+- name: Configure Common Settings
   hosts: all
   roles:
-    - ping
+    - common
+  tags: common
+
+# ==========================================
+# 2. Gateway Node Configuration
+# ==========================================
+- name: Configure Gateway Node
+  hosts: gateway
+  roles:
+    - gateway
+  tags: gateway
