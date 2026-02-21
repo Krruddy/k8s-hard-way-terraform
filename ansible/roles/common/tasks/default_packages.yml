@@ -1,0 +1,13 @@
+- name: Install basic utilities
+  ansible.builtin.apt:
+    name:
+      - wget
+      - curl
+      - vim
+      - git
+      - openssl
+      - socat      
+      - conntrack 
+      - ipset    
+    state: present
+    update_cache: true

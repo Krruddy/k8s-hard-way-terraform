@@ -1,3 +1,6 @@
 - name: Default Firewall Rules
   become: yes
   ansible.builtin.import_tasks: default_firewall.yml
+- name: Install Default Packages
+  become: yes
+  ansible.builtin.import_tasks: default_packages.yml
