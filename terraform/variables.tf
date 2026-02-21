@@ -5,6 +5,18 @@ variable "vault_addr" {
   description = "The address of the Vault server"
 }
 
+variable "vault_auth_backend_approle_path" {
+  type = string
+  description = "The path where the AppRole auth method is enabled in Vault."
+  default = "approle"
+}
+
+variable "vault_auth_backend_approle_role_name" {
+  type = string
+  description = "The name of the AppRole role to authenticate with."
+  default = "ansible-role"
+}
+
 variable "vault_role_id" {
   type = string
   description = "The Role ID for Vault AppRole authentication."
