@@ -1,0 +1,47 @@
+# ---------------------------------------------------------
+# FORWARD CHAIN
+# ---------------------------------------------------------
+
+- name: Allow Established/Related (Forwarding)
+  ansible.builtin.iptables:
+    chain: FORWARD
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+    comment: allow tracked connections
+
+- name: Allow LAN to WAN
+  ansible.builtin.iptables:
+    chain: FORWARD
+    source: "10.0.0.0/24"
+    in_interface: eth1
+    out_interface: eth0
+    jump: ACCEPT
+    comment: Allow LAN to WAN
+
+- name: Set FORWARD policy to DROP
+  ansible.builtin.iptables:
+    chain: FORWARD
+    policy: DROP
+
+# ---------------------------------------------------------
+# NAT
+# ---------------------------------------------------------
+
+- name: Configure Masquerading (NAT) on WAN interface
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "10.0.0.0/24"
+    out_interface: eth0
+    jump: MASQUERADE
+    comment: Ansible NAT Masquerade
+
+# ---------------------------------------------------------
+# Save State
+# ---------------------------------------------------------
+
+- name: Save current state of the firewall in system file
+  community.general.iptables_state:
+    ip_version: ipv4
+    state: saved
+    path: /etc/iptables/rules.v4

@@ -1,0 +1,4 @@
+- name: Gateway Firewall Rules
+  become: yes
+  ansible.builtin.import_tasks: firewall.yml
+
