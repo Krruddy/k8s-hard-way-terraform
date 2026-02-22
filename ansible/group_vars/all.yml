@@ -1,2 +1,48 @@
 ---
-ansible_user: ansible
+# =============================================================================
+# Authentication
+# =============================================================================
+ansible_user: "ansible"
+
+# =============================================================================
+# Architecture
+# =============================================================================
+arch: "amd64"
+
+# =============================================================================
+# Component Versions
+# =============================================================================
+cni_version: "v1.9.0"
+containerd_version: "2.2.1"
+crictl_version: "v1.35.0"
+etcd_version: "v3.6.8"
+k8s_version: "v1.35.1"
+runc_version: "v1.4.0"
+
+# ====================================================
+# KUBERNETES BINARIES
+# ====================================================
+
+k8s_base_url: "https://dl.k8s.io/{{ k8s_version }}/bin/linux/{{ arch }}"
+
+k8s_binaries:
+  controller:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+  worker:
+    - kubelet
+    - kube-proxy
+    - kubectl
+  client:
+    - kubectl
+
+# Checksums (SHA256)
+k8s_checksums:
+  kubectl: "sha256:36e2f4ac66259232341dd7866952d64a958846470f6a9a6a813b9117bd965207"
+  kube-apiserver: "sha256:74671d5b9a0965120c0d9e35611f1555a3e795545238363c69b46765ee22b10c"
+  kube-controller-manager: "sha256:d78b097ec3f21cce5c2b09cd14fab0ae3a446287ac5caa1734245f80c86fd400"
+  kube-scheduler: "sha256:0b818ca2daf47c7e712534e7118ec4f3675fd4a9259822fb7756266c89378acd"
+  kube-proxy: "sha256:1839e36d4d52a67c6dc370f3466a42925226e7073464d57caf5f7b83825cc59a"
+  kubelet: "sha256:e7343310e03ff0d424df4397bdfa4468947d6d1f0f93dac586c1e8d6e4086d5d"

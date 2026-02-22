@@ -1,0 +1,2 @@
+# K8s binaries needed on worker nodes
+k8s_binary_list: "{{ k8s_binaries.worker }}"

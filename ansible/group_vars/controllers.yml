@@ -3,3 +3,5 @@ system_users:
   - etcd
   - kubernetes
 
+# K8s binaries needed on controller nodes
+k8s_binary_list: "{{ k8s_binaries.controller }}"

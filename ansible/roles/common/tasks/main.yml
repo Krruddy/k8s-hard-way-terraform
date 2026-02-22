@@ -9,3 +9,8 @@
 - name: Update /etc/hosts with all inventory hosts
   become: yes
   ansible.builtin.import_tasks: hosts.yml
+
+- name: Download and Install Kubernetes Binaries on All hosts
+  become: yes
+  ansible.builtin.import_tasks: download_kubernetes_binaries.yml
+  tags: download_kubernetes_binaries

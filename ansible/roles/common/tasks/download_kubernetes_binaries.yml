@@ -1,0 +1,21 @@
+- name: Create versioned binary directory
+  ansible.builtin.file:
+    path: "/opt/kubernetes/bin/{{ k8s_version }}"
+    state: directory
+    mode: '0755'
+
+- name: Download K8s Binaries
+  ansible.builtin.get_url:
+    url: "{{ k8s_base_url }}/{{ item }}"
+    dest: "/opt/kubernetes/bin/{{ k8s_version }}/{{ item }}"
+    checksum: "{{ k8s_checksums[item] }}"
+    mode: '0755'
+  loop: "{{ k8s_binary_list }}"
+
+- name: Symlink binaries to system path
+  ansible.builtin.file:
+    src: "/opt/kubernetes/bin/{{ k8s_version }}/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+    force: true
+  loop: "{{ k8s_binary_list }}"
