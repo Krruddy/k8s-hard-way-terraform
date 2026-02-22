@@ -1,6 +1,11 @@
 - name: Default Firewall Rules
   become: yes
   ansible.builtin.import_tasks: default_firewall.yml
+
 - name: Install Default Packages
   become: yes
   ansible.builtin.import_tasks: default_packages.yml
+
+- name: Update /etc/hosts with all inventory hosts
+  become: yes
+  ansible.builtin.import_tasks: hosts.yml
