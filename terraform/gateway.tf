@@ -35,23 +35,23 @@ resource "proxmox_virtual_environment_vm" "gateway" {
   }
 
   initialization {
-      datastore_id = var.proxmox_storage
+    datastore_id = var.proxmox_storage
 
-      # Home Network
-      ip_config {
-        ipv4 {
-          address = "dhcp"
-        }
+    # Home Network
+    ip_config {
+      ipv4 {
+        address = "dhcp"
       }
-      
-      # Cluster Network (Internal)
-      ip_config {
-        ipv4 {
-          address = var.k8s_gateway_ip
-        }
-      }
-
-      user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-
     }
+    
+    # Cluster Network (Internal)
+    ip_config {
+      ipv4 {
+        address = var.k8s_gateway_ip
+      }
+    }
+
+    user_data_file_id = proxmox_virtual_environment_file.cloud_init_user.id
+    meta_data_file_id = proxmox_virtual_environment_file.cloud_init_gateway_meta.id
+  }
 }
