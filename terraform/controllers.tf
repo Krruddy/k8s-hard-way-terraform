@@ -1,7 +1,9 @@
 resource "proxmox_virtual_environment_vm" "controllers" {
   count     = var.k8s_ctrl_count
-  name      = "k8s-ctrl-${count.index + 1}"
   node_name = var.proxmox_name
+  name      = "k8s-ctrl-${count.index + 1}"
+  description = "Kubernetes Controller Node ${count.index + 1}"
+  tags = ["kubernetes", "controller"]
   vm_id     = var.k8s_ctrl_id_start + count.index + 1
   pool_id = var.proxmox_pool
 

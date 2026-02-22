@@ -1,7 +1,9 @@
 resource "proxmox_virtual_environment_vm" "workers" {
   count     = var.k8s_wkr_count
-  name      = "k8s-wkr-${count.index + 1}"
   node_name = var.proxmox_name
+  name      = "k8s-wkr-${count.index + 1}"
+  description = "Kubernetes Worker Node ${count.index + 1}"
+  tags = ["kubernetes", "worker"]
   vm_id     = var.k8s_wkr_id_start + count.index + 1
   pool_id = var.proxmox_pool
 
