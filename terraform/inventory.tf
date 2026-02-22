@@ -14,6 +14,9 @@ ${vm.name} ansible_host=${split("/", vm.initialization[0].ip_config[0].ipv4[0].a
 ${vm.name} ansible_host=${split("/", vm.initialization[0].ip_config[0].ipv4[0].address)[0]}
 %{ endfor ~}
 
+[clients]
+${proxmox_virtual_environment_vm.gateway.name} ansible_host=${split("/", var.k8s_gateway_wan_ip)[0]}
+
 [k8s_cluster:children]
 controllers
 workers
