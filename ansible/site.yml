@@ -12,6 +12,18 @@
 # ==========================================
 - name: Configure Gateway Node
   hosts: gateway
+  become: yes
   roles:
     - gateway
   tags: gateway
+
+# ==========================================
+# 3. Controller Nodes Configuration
+# ==========================================
+- name: Configure Controller Nodes
+  hosts: controllers
+  become: yes
+  roles:
+    - controller
+  tags: controller
+

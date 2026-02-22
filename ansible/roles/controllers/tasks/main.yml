@@ -1,0 +1,4 @@
+- name: Create system users and groups for Kubernetes
+  become: yes
+  ansible.builtin.import_tasks: create_users.yml
+  tags: create_users

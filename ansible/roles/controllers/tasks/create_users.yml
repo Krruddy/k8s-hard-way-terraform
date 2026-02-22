@@ -1,0 +1,16 @@
+- name: Create system groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    system: true
+    state: present
+  loop: "{{ system_users }}"
+
+- name: Create system users
+  ansible.builtin.user:
+    name: "{{ item }}"
+    group: "{{ item }}"
+    system: true
+    shell: /sbin/nologin
+    create_home: false
+    state: present
+  loop: "{{ system_users }}"

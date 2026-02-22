@@ -1,0 +1,5 @@
+# System users and groups for Kubernetes
+system_users:
+  - etcd
+  - kubernetes
+
