@@ -27,6 +27,42 @@ variable "vault_secret_id" {
   description = "The Secret ID for Vault AppRole authentication."
 }
 
+variable "pki_path" {
+  description = "Path where the PKI engine will be mounted"
+  type        = string
+  default     = "pki"
+}
+
+variable "common_name" {
+  description = "The Common Name (CN) for the Root CA"
+  type        = string
+  default     = "Kubernetes CA"
+}
+
+variable "ca_ttl" {
+  description = "The Time-To-Live for the Root CA and issued certs (in seconds)"
+  type        = number
+  default     = 31536000 # 1 Year
+}
+
+variable "organization" {
+  description = "Organization name for the certificate subject"
+  type        = object({
+    name     = string
+    ou       = string
+    country  = string
+    locality = string
+    province = string
+  })
+  default = {
+    name     = "My Organization"
+    ou       = "IT"
+    country  = "FR"
+    locality = "Paris"
+    province = "Ile-de-France"
+  }
+}
+
 # --- Proxmox Variables ---
 
 variable "proxmox_endpoint" {
