@@ -59,6 +59,10 @@ resource "vault_pki_secret_backend_role" "kubernetes" {
   allow_localhost = true
   client_flag = true # Implies `ServerAuth` in the `key_usage` field
   server_flag = true # Implies `ClientAuth` in the `key_usage` field
+
+  enforce_hostnames = false
+  allow_any_name = true
+
   country = [
     var.organization.country
   ]
