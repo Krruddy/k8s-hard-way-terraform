@@ -41,7 +41,7 @@ resource "vault_pki_secret_backend_role" "kubernetes" {
   backend          = vault_mount.pki.path
   name             = "kubernetes"
   # The name of the CA managed by this role.
-  issuer_ref       = vault_pki_secret_backend_root_cert.root.common_name
+  issuer_ref       = vault_pki_secret_backend_root_cert.root.issuer_id
   ttl              = var.ca_ttl
   max_ttl          = var.ca_ttl
   allow_ip_sans    = true
@@ -77,4 +77,3 @@ resource "vault_pki_secret_backend_role" "kubernetes" {
     "KeyEncipherment" # Key encryption, i.e. when a symmetric key is used for data encryption and this is encrypted with the key contained in the certificate
   ]
 }
-
