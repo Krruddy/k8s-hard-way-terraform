@@ -33,8 +33,7 @@ locals {
 
     "worker" = {
       org               = "system:nodes"
-      allow_subdomains  = true
-      allowed_domains   = ["internal"] 
+      allow_any_name    = true
       server_flag       = true
     }
 
