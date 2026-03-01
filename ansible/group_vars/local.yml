@@ -57,3 +57,9 @@ k8s_certificates:
     role: "kubernetes-service-accounts"
     cn: "service-accounts"
     dest_dir: "../pki"
+
+worker_cert_template:
+  role: "kubernetes-worker"
+  cn_tmp: "system:node:"
+  san_ips: "127.0.0.1"
+  dest_dir: "../pki"
