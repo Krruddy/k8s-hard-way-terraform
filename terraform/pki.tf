@@ -37,41 +37,44 @@ resource "vault_pki_secret_backend_root_cert" "root" {
 }
 
 # Configure the rules around the certificates signed by the CA
-resource "vault_pki_secret_backend_role" "kubernetes" {
+resource "vault_pki_secret_backend_role" "k8s_roles" {
+
+  # We loop over the 'k8s_roles_config' map to create a role for each entry.
+  for_each = local.k8s_roles_config
+
+  name = "kubernetes-${each.key}"
+  organization = [
+    coalesce(
+      lookup(each.value, "org", null), 
+      lookup(local.role_defaults, "org", null), 
+      var.organization.name
+    )
+  ]
+
+  allow_any_name    = lookup(each.value, "allow_any_name", local.role_defaults.allow_any_name)
+  enforce_hostnames = lookup(each.value, "enforce_hostnames", local.role_defaults.enforce_hostnames)
+  server_flag       = lookup(each.value, "server_flag", local.role_defaults.server_flag)
+  client_flag       = lookup(each.value, "client_flag", local.role_defaults.client_flag)
+
+  allowed_domains = lookup(each.value, "allowed_domains", local.role_defaults.allowed_domains)
+  allow_subdomains   = lookup(each.value, "allow_subomains", local.role_defaults.allow_subdomains)
+  
+
+  # --- Static Values
   backend          = vault_mount.pki.path
-  name             = "kubernetes"
   # The name of the CA managed by this role.
   issuer_ref       = vault_pki_secret_backend_root_cert.root.issuer_id
   ttl              = var.ca_ttl
   max_ttl          = var.ca_ttl
   allow_ip_sans    = true
+  allow_localhost  = true
   key_type         = "rsa"
   key_bits         = 4096
-  allowed_domains  = [
-    "kubernetes",
-    "kubernetes.default",
-    "kubernetes.default.svc",
-    "kubernetes.default.svc.cluster",
-    "kubernetes.svc.cluster.local"
-  ]
-  allow_subdomains = true
-  allow_bare_domains = true
-  allow_localhost = true
-  client_flag = true # Implies `ServerAuth` in the `key_usage` field
-  server_flag = true # Implies `ClientAuth` in the `key_usage` field
-
-  enforce_hostnames = false
-  allow_any_name = true
-
-  country = [
-    var.organization.country
-  ]
-  locality = [
-    var.organization.locality
-  ]
-  province = [
-    var.organization.province
-  ]
+  
+  country  = [var.organization.country]
+  locality = [var.organization.locality]
+  province = [var.organization.province]
+  
   key_usage = [
     "DigitalSignature", # The certificate can be used to sign data
     "KeyEncipherment" # Key encryption, i.e. when a symmetric key is used for data encryption and this is encrypted with the key contained in the certificate

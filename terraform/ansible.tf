@@ -12,6 +12,10 @@ path "auth/token/create"
 path "ssh-client-signer/sign/ansible-signer" {
   capabilities = ["update", "read"]
 }
+# Allow signing of certificates using the 'kubernetes' role
+path "pki/issue/*" {
+  capabilities = ["update", "read"]
+}
 EOT
 }
 
