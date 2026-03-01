@@ -1,10 +1,11 @@
 locals {
   role_defaults = {
     org               = null
-    allow_any_name    = true
+    allow_any_name    = false
     enforce_hostnames = false
     allowed_domains   = []
     allow_subdomains  = false
+    allow_bare_domains = true
     server_flag       = false
     client_flag       = true
   }
@@ -15,7 +16,10 @@ locals {
         "kubernetes",
         "kubernetes.default",
         "kubernetes.default.svc",
-        "kubernetes.default.svc.cluster.local",
+        "kubernetes.default.svc.cluster",
+        "kubernetes.svc.cluster.local",
+        "server.kubernetes.local",
+        "api-server.kubernetes.local",
         "localhost"
       ]
       allow_subdomains  = true
@@ -24,8 +28,7 @@ locals {
 
     "admin" = {
       org = "system:masters"
-      allow_any_name   = false
-      enforce_hostnames = true
+      allowed_domains   = ["kubernetes-super-admin"]
     }
 
     "worker" = {
@@ -37,7 +40,7 @@ locals {
 
     "kube-proxy" = {
       org = "system:node-proxier"
-      allowed_domains   = ["kube-proxy"]
+      allowed_domains   = ["system:kube-proxy"]
       server_flag       = true
     }
 
@@ -48,15 +51,14 @@ locals {
     }
 
     "kube-scheduler" = {
-      org = "system:kube-scheduler"
-      allowed_domains   = ["kube-scheduler"]
+      org = "system:system:kube-scheduler"
+      allowed_domains   = ["system:kube-scheduler"]
       server_flag       = true
     }
     
     "service-accounts" = {
-      org = "" 
-      allow_any_name   = false
-      enforce_hostnames = true
+      org = "kubernetes-service-accounts" 
+      allowed_domains   = ["service-accounts"]
     }
   }
 }
