@@ -40,19 +40,19 @@ locals {
 
     "kube-proxy" = {
       org = "system:node-proxier"
-      allowed_domains   = ["system:kube-proxy"]
+      allowed_domains   = ["system:kube-proxy", "kube-proxy"]
       server_flag       = true
     }
 
     "kube-controller-manager" = {
       org = "system:kube-controller-manager"
-      allowed_domains   = ["kube-controller-manager"]
+      allowed_domains   = ["system:kube-controller-manager", "kube-controller-manager"]
       server_flag       = true
     }
 
     "kube-scheduler" = {
       org = "system:system:kube-scheduler"
-      allowed_domains   = ["system:kube-scheduler"]
+      allowed_domains   = ["system:kube-scheduler", "kube-scheduler"]
       server_flag       = true
     }
     
