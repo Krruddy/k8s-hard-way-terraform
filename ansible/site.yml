@@ -34,6 +34,5 @@
   hosts: controllers
   become: yes
   roles:
-    - controller
-  tags: controller
-
+    - controllers
+  tags: controllers
