@@ -1,0 +1,17 @@
+- name: Generate Kubernetes Certificates
+  community.hashi_vault.vault_pki_generate_certificate:
+    url: "{{ vault_addr }}"
+    token: "{{ vault_token }}"
+    mount_point: "{{ pki_mount }}"
+    
+    role_name: "{{ item.value.role }}"
+    common_name: "{{ item.value.cn }}"
+    ttl: "{{ cert_ttl }}"
+    
+    alt_names: "{{ item.value.san_dns | default([]) }}"
+    ip_sans: "{{ item.value.san_ips | default([]) }}"
+
+  loop: "{{ k8s_certificates | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  register: pki_output
