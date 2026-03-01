@@ -1,4 +1,14 @@
 # ==========================================
+# 0. PKI Configuration
+# ==========================================
+- name: Configure PKI and Vault
+  hosts: local
+  gather_facts: no
+  roles:
+    - vault_pki
+  tags: vault_pki
+
+# ==========================================
 # 1. Common Configuration
 # ==========================================
 - name: Configure Common Settings
