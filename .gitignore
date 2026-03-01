@@ -45,3 +45,6 @@ terraform.rc
 
 # Environment files
 .env
+
+# Ignore local certificates and keys
+pki/
