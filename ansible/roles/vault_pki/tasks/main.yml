@@ -80,3 +80,10 @@
   loop: "{{ pki_output.results }}"
   loop_control:
     label: "{{ item.item.key }}"
+
+- name: Save the CA Certificates to Files
+  ansible.builtin.get_url:
+    url: https://192.168.1.17:8200/v1/pki/ca
+    dest: "../pki/ca.pem"
+    mode: '0644'
+    validate_certs: no
