@@ -1,0 +1,21 @@
+- name: Create Kubernetes PKI Directory on Worker Nodes
+  file:
+    path: /var/lib/kubernetes
+    state: directory
+    mode: '0755'
+
+- name: Distribute Common Worker Node Certificates
+  copy:
+    src: "../pki/{{ item }}"
+    dest: "/var/lib/kubernetes/{{ item }}"
+    mode: '0640'
+  loop: "{{ certs_to_transfer }}"
+
+- name: Distribute Unique Worker Node Certificates
+  copy:
+    src: "../pki/{{ item }}"
+    dest: "/var/lib/kubernetes/{{ item }}"
+    mode: '0640'
+  loop:
+    - "{{ inventory_hostname }}.pem"
+    - "{{ inventory_hostname }}-key.pem"

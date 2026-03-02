@@ -1,0 +1,3 @@
+- name: Transfer PKI Certificates to Worker Nodes
+  ansible.builtin.import_tasks: transfer_pki_workers.yml
+  tags: transfer_pki_workers
