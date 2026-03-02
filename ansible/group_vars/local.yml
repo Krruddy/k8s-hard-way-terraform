@@ -53,7 +53,7 @@ k8s_certificates:
     san_ips: 
       - "127.0.0.1"
     dest_dir: "../pki"
-  service_account:
+  service_accounts:
     role: "kubernetes-service-accounts"
     cn: "service-accounts"
     dest_dir: "../pki"
