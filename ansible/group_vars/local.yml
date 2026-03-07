@@ -1,4 +1,7 @@
 ---
+## ==========================================
+## PKI Configuration (Vault)
+## ==========================================
 vault_addr: "{{ lookup('env', 'VAULT_ADDR') }}"
 vault_cacert: "{{ lookup('env', 'VAULT_CACERT') }}"
 vault_token: "{{ lookup('env', 'VAULT_TOKEN') }}"
@@ -6,60 +9,3 @@ vault_token: "{{ lookup('env', 'VAULT_TOKEN') }}"
 # Global defaults
 pki_mount: "pki"
 cert_ttl: "876h"
-
-# The Master List of Certificates to Generate
-k8s_certificates:
-  admin:
-    role: "kubernetes-admin"
-    cn: "kubernetes-super-admin"
-    dest_dir: "../pki"
-  kube_apiserver:
-    role: "kubernetes-api-server"
-    cn: "kubernetes"
-    san_dns: 
-      - "kubernetes"
-      - "kubernetes.default"
-      - "kubernetes.default.svc"
-      - "kubernetes.default.svc.cluster"
-      - "kubernetes.svc.cluster.local"
-      - "api-server.kubernetes.local"
-      - "localhost"
-    san_ips: 
-      - "10.32.0.1"
-      - "127.0.0.1"
-      - "10.0.0.1"
-    dest_dir: "../pki"
-  controller_manager:
-    role: "kubernetes-kube-controller-manager"
-    cn: "system:kube-controller-manager"
-    san_dns: 
-      - "kube-controller-manager"
-    san_ips: 
-      - "127.0.0.1"
-    dest_dir: "../pki"
-  scheduler:
-    role: "kubernetes-kube-scheduler"
-    cn: "system:kube-scheduler"
-    san_dns: 
-      - "kube-scheduler"
-    san_ips: 
-      - "127.0.0.1"
-    dest_dir: "../pki"
-  kube_proxy:
-    role: "kubernetes-kube-proxy"
-    cn: "system:kube-proxy"
-    san_dns: 
-      - "kube-proxy"
-    san_ips: 
-      - "127.0.0.1"
-    dest_dir: "../pki"
-  service_accounts:
-    role: "kubernetes-service-accounts"
-    cn: "service-accounts"
-    dest_dir: "../pki"
-
-worker_cert_template:
-  role: "kubernetes-worker"
-  cn_tmp: "system:node:"
-  san_ips: "127.0.0.1"
-  dest_dir: "../pki"
