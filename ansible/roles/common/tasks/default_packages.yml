@@ -4,7 +4,6 @@
       - wget
       - curl
       - vim
-      - git
       - openssl
       - socat      
       - conntrack 
