@@ -9,7 +9,7 @@ k8s_binary_list: "{{ k8s_binaries.controller }}"
 # PKI Certificates to transfer to controller nodes
 certs_to_transfer:
   - ca.pem
-  - kube_apiserver.pem
-  - kube_apiserver-key.pem
-  - service_accounts.pem    
-  - service_accounts-key.pem
+  - kube-apiserver.pem
+  - kube-apiserver-key.pem
+  - service-accounts.pem    
+  - service-accounts-key.pem
