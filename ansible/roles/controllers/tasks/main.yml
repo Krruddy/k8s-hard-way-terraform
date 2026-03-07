@@ -1,8 +1,0 @@
-- name: Create system users and groups for Kubernetes
-  become: yes
-  ansible.builtin.import_tasks: create_users.yml
-  tags: create_users
-
-- name: Transfer PKI Certificates to Controller Nodes
-  ansible.builtin.import_tasks: transfer_pki_controllers.yml
-  tags: transfer_pki_controllers
