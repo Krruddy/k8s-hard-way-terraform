@@ -1,89 +1,25 @@
-- name: Generate the Workers Kubernetes Certificates
-  community.hashi_vault.vault_pki_generate_certificate:
-    url: "{{ vault_addr }}"
-    token: "{{ vault_token }}"
-    mount_point: "{{ pki_mount }}"
-    
-    role_name: "{{ worker_cert_template.role }}"
-    common_name: "system:node:{{ item }}"
-    ttl: "{{ cert_ttl }}"
-    
-    alt_names: ["{{ item }}"]
-    ip_sans: 
-      - "{{ worker_cert_template.san_ips }}"
-      - "{{ hostvars[item]['ansible_host'] }}"
-
-  loop: "{{ groups['workers'] }}"
-  loop_control:
-    label: "{{ item }}"
-  register: worker_pki_output
-
-- name: Generate the rest of the Kubernetes Certificates
-  community.hashi_vault.vault_pki_generate_certificate:
-    url: "{{ vault_addr }}"
-    token: "{{ vault_token }}"
-    mount_point: "{{ pki_mount }}"
-    
-    role_name: "{{ item.value.role }}"
-    common_name: "{{ item.value.cn }}"
-    ttl: "{{ cert_ttl }}"
-    
-    alt_names: "{{ item.value.san_dns | default([]) }}"
-    ip_sans: "{{ item.value.san_ips | default([]) }}"
-
-  loop: "{{ k8s_certificates | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
-  register: pki_output
-
 - name: Ensure PKI directory exists
   ansible.builtin.file:
-    path: "{{ item.value.dest_dir }}"
+    path: "{{ pki_directory }}"
     state: directory
     mode: '0755'
-  loop: "{{ k8s_certificates | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
+  tags: 
+    - pull_ca_certificate
+    - worker_certificates
+    - other_certificates
 
-- name: Save the Workers Certificates to Files
-  ansible.builtin.copy:
-    content: "{{ item.data.data.certificate }}\n{{ item.data.data.issuing_ca }}"
-    dest: "{{ worker_cert_template.dest_dir }}/{{ item.item }}.pem"
-    mode: '0644'
-  loop: "{{ worker_pki_output.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-
-- name: Save  the rest of the Certificates to Files
-  ansible.builtin.copy:
-    content: "{{ item.data.data.certificate }}\n{{ item.data.data.issuing_ca }}"
-    dest: "{{ item.item.value.dest_dir }}/{{ item.item.key }}.pem"
-    mode: '0644'
-  loop: "{{ pki_output.results }}"
-  loop_control:
-    label: "{{ item.item.key }}"
-
-- name: Save the Workers Private Keys to Files
-  ansible.builtin.copy:
-    content: "{{ item.data.data.private_key }}"
-    dest: "{{ worker_cert_template.dest_dir }}/{{ item.item }}-key.pem"
-    mode: '0600'
-  loop: "{{ worker_pki_output.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-
-- name: Save the rest of the Private Keys to Files
-  ansible.builtin.copy:
-    content: "{{ item.data.data.private_key }}"
-    dest: "{{ item.item.value.dest_dir }}/{{ item.item.key }}-key.pem"
-    mode: '0600'
-  loop: "{{ pki_output.results }}"
-  loop_control:
-    label: "{{ item.item.key }}"
-
-- name: Save the CA Certificates to Files
+- name: Pull the CA Certificate from Vault
   ansible.builtin.get_url:
-    url: https://192.168.1.17:8200/v1/pki/ca
-    dest: "../pki/ca.pem"
+    url: "{{ vault_addr }}/v1/{{ pki_mount }}/ca"
+    dest: "{{ pki_directory }}/ca.pem"
     mode: '0644'
     validate_certs: no
+  tags: pull_ca_certificate
+
+- name: Generate the Workers Kubernetes Certificates
+  ansible.builtin.import_tasks: worker_certificates.yml
+  tags: worker_certificates
+
+- name: Generate the rest of the Kubernetes Certificates
+  ansible.builtin.import_tasks: other_certificates.yml
+  tags: other_certificates

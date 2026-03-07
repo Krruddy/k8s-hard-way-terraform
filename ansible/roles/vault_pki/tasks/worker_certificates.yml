@@ -1,0 +1,37 @@
+- name: Generate the Workers Kubernetes Certificates
+  community.hashi_vault.vault_pki_generate_certificate:
+    url: "{{ vault_addr }}"
+    token: "{{ vault_token }}"
+    mount_point: "{{ pki_mount }}"
+    
+    role_name: "{{ worker_k8s_component.vault_role }}"
+    common_name: "system:node:{{ item }}"
+    ttl: "{{ cert_ttl }}"
+    
+    alt_names: ["{{ item }}"]
+    ip_sans: 
+      - "{{ worker_k8s_component.san_ips }}"
+      - "{{ hostvars[item]['ansible_host'] }}"
+
+  loop: "{{ groups['workers'] }}"
+  loop_control:
+    label: "{{ item }}"
+  register: worker_pki_output
+
+- name: Save the Workers Certificates to Files
+  ansible.builtin.copy:
+    content: "{{ item.data.data.certificate }}\n{{ item.data.data.issuing_ca }}"
+    dest: "{{ pki_directory }}/{{ item.item }}.pem"
+    mode: '0644'
+  loop: "{{ worker_pki_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Save the Workers Private Keys to Files
+  ansible.builtin.copy:
+    content: "{{ item.data.data.private_key }}"
+    dest: "{{ pki_directory }}/{{ item.item }}-key.pem"
+    mode: '0600'
+  loop: "{{ worker_pki_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"

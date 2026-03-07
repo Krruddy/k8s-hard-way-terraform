@@ -1,0 +1,36 @@
+- name: Generate the rest of the Kubernetes Certificates
+  community.hashi_vault.vault_pki_generate_certificate:
+    url: "{{ vault_addr }}"
+    token: "{{ vault_token }}"
+    mount_point: "{{ pki_mount }}"
+    
+    role_name: "{{ item.value.vault_role }}"
+    common_name: "{{ item.value.cn }}"
+    ttl: "{{ cert_ttl }}"
+    
+    alt_names: "{{ item.value.san_dns | default([]) }}"
+    ip_sans: "{{ item.value.san_ips | default([]) }}"
+
+  loop: "{{ k8s_components | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  register: pki_output
+
+- name: Save the rest of the Certificates to Files
+  ansible.builtin.copy:
+    content: "{{ item.data.data.certificate }}\n{{ item.data.data.issuing_ca }}"
+    dest: "{{ pki_directory }}/{{ item.item.value.cert_name }}.pem"
+    mode: '0644'
+  loop: "{{ pki_output.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
+- name: Save the rest of the Private Keys to Files
+  ansible.builtin.copy:
+    content: "{{ item.data.data.private_key }}"
+    dest: "{{ pki_directory }}/{{ item.item.value.cert_name }}-key.pem"
+    mode: '0600'
+  loop: "{{ pki_output.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+
