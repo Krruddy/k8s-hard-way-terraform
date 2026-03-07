@@ -40,6 +40,10 @@ resource "proxmox_virtual_environment_vm" "controllers" {
       }
     }
 
+    dns {
+      servers = ["8.8.8.8"]
+    }
+
     user_data_file_id = proxmox_virtual_environment_file.cloud_init_user.id
     meta_data_file_id = proxmox_virtual_environment_file.cloud_init_controllers_meta[count.index].id
   }
