@@ -2,14 +2,14 @@
   become: true
   ansible.builtin.get_url:
     url: "{{ k8s_base_url }}/{{ binary_item }}"
-    dest: "{{ k8s_download_binary }}/{{ k8s_version }}/{{ binary_item }}"
+    dest: "{{ k8s_download_dest }}/{{ k8s_version }}/{{ binary_item }}"
     checksum: "{{ k8s_checksums[binary_item] }}"
     mode: '0755'
 
 - name: "Symlink {{ binary_item }} to {{ k8s_binary_dest }}"
   become: true
   ansible.builtin.file:
-    src: "{{ k8s_download_binary }}/{{ k8s_version }}/{{ binary_item }}"
+    src: "{{ k8s_download_dest }}/{{ k8s_version }}/{{ binary_item }}"
     dest: "{{ k8s_binary_dest }}/{{ binary_item }}"
     state: link
     force: true
