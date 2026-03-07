@@ -1,0 +1,26 @@
+- name: Download etcd tarball
+  ansible.builtin.get_url:
+    url: "{{ downloads.etcd.url }}"
+    dest: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}.tar.gz"
+    checksum: "{{ downloads.etcd.checksum }}"
+    mode: "{{ downloads.etcd.mode }}"
+  register: etcd_download
+
+- name: Extract etcd tarball
+  ansible.builtin.unarchive:
+    src: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}.tar.gz"
+    dest: "{{ downloads.etcd.dest }}"
+    remote_src: true
+    # To only extract if not already extracted
+    creates: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}/etcd"
+  register: etcd_extracted
+
+- name: Symlink etcd binaries to system path
+  ansible.builtin.file:
+    src: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - etcd
+    - etcdctl

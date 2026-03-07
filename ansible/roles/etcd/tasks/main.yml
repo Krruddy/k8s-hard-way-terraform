@@ -1,0 +1,9 @@
+- name: Install etcd
+  become: yes
+  ansible.builtin.import_tasks: install_etcd.yml
+  tags: etcd_install
+
+- name: Configure etcd Service
+  become: yes
+  ansible.builtin.import_tasks: configure_etcd_service.yml
+  tags: etcd_configure

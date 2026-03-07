@@ -31,3 +31,8 @@
   hosts: k8s_cluster:gateway
   roles: [common]
   tags: common_setup
+
+- name: Bootstrap Etcd
+  hosts: etcd_nodes
+  roles: [etcd]
+  tags: etcd
