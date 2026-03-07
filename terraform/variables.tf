@@ -161,7 +161,7 @@ variable "k8s_ctrl_id_start" {
 variable "k8s_ctrl_count" {
   description = "Number of controller nodes"
   type        = number
-  default     = 3
+  default     = 1
 }
 
 variable "k8s_ctrl_cpu_cores" {
@@ -186,7 +186,7 @@ variable "k8s_wkr_id_start" {
 variable "k8s_wkr_count" {
   description = "Number of worker nodes"
   type        = number
-  default     = 3
+  default     = 8
 }
 
 variable "k8s_wkr_cpu_cores" {
