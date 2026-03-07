@@ -1,0 +1,15 @@
+- name: Create Kubernetes Configuration Directory
+  ansible.builtin.file:
+    path: /etc/kubernetes/config
+    state: directory
+    mode: '0755'
+
+- name: Distribute Kubeconfigs to Controller
+  copy:
+    src: "../kubeconfigs/{{ item }}"
+    dest: "/var/lib/kubernetes/{{ item }}"
+    mode: '0644'
+  loop:
+    - admin.kubeconfig
+    - controller_manager.kubeconfig
+    - scheduler.kubeconfig

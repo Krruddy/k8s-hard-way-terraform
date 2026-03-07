@@ -1,0 +1,34 @@
+- name: Create Kubernetes Scheduler Data Directory
+  ansible.builtin.file:
+    path: "/var/lib/kubernetes"
+    state: directory
+    #mode: '0700' # Commented out because no restrictions are provided in the guide
+
+- name: Copy Kubeconfig for Scheduler
+  ansible.builtin.copy:
+    src: "{{ kubeconfig_directory }}/scheduler.kubeconfig"
+    dest: "/var/lib/kubernetes/scheduler.kubeconfig"
+
+- name: Configure Kubernetes Scheduler Systemd Service
+  ansible.builtin.template:
+    src: kube-scheduler.service.j2
+    dest: /etc/systemd/system/kube-scheduler.service
+    mode: '0644'
+
+- name: Create Kubernetes Scheduler Config Directory
+  ansible.builtin.file:
+    path: "/etc/kubernetes/config"
+    state: directory
+    mode: '0755'
+
+- name: Copy Kubernetes Scheduler Configuration File
+  ansible.builtin.template:
+    src: kube-scheduler.yaml.j2
+    dest: "/etc/kubernetes/config/kube-scheduler.yaml"
+
+- name: Enable and Start Kubernetes Scheduler Service
+  ansible.builtin.systemd:
+    name: kube-scheduler
+    state: started
+    enabled: true
+    daemon_reload: true

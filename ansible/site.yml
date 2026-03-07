@@ -36,3 +36,13 @@
   hosts: etcd_nodes
   roles: [etcd]
   tags: etcd
+
+- name: Bootstrap Control Plane
+  hosts: controllers
+  roles: [control-plane]
+  tags: control_plane_setup
+#
+#- name: Bootstrap Workers
+#  hosts: workers
+#  roles: [kube-worker]
+#  tags: worker_setup
