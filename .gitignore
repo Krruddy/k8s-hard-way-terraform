@@ -50,4 +50,4 @@ terraform.rc
 pki/
 
 # Ignore local KubeConfig files
-kubeconfigs/
+./kubeconfigs/
