@@ -1,38 +1,33 @@
-# ==========================================
-# 0. PKI Configuration
-# ==========================================
-- name: Configure PKI and Vault
-  hosts: local
-  gather_facts: no
-  roles:
+- name: Generate PKI
+  hosts: localhost
+  roles: [vault_pki]
+  tags: 
     - vault_pki
-  tags: vault_pki
+    - local_setup
 
-# ==========================================
-# 1. Common Configuration
-# ==========================================
-- name: Configure Common Settings
-  hosts: all
-  roles:
-    - common
-  tags: common
+- name: Generate Kubeconfigs
+  hosts: localhost
+  roles: [kubeconfigs]
+  tags: 
+    - kubeconfigs
+    - local_setup
 
-# ==========================================
-# 2. Gateway Node Configuration
-# ==========================================
-- name: Configure Gateway Node
+- name: Default Firewall Setup (Gateway)
   hosts: gateway
-  become: yes
-  roles:
-    - gateway
+  roles: [default_firewall]
+  tags: default_firewall_gateway
+
+- name: Default Firewall Setup (Kubernetes Cluster)
+  hosts: k8s_cluster
+  roles: [default_firewall]
+  tags: default_firewall_k8s
+
+- name: Gateway Setup
+  hosts: gateway
+  roles: [gateway]
   tags: gateway
 
-# ==========================================
-# 3. Controller Nodes Configuration
-# ==========================================
-- name: Configure Controller Nodes
-  hosts: controllers
-  become: yes
-  roles:
-    - controllers
-  tags: controllers
+- name: Base OS Setup
+  hosts: k8s_cluster:gateway
+  roles: [common]
+  tags: common_setup
