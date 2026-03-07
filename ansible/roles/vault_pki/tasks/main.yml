@@ -10,7 +10,7 @@
 
 - name: Pull the CA Certificate from Vault
   ansible.builtin.get_url:
-    url: "{{ vault_addr }}/v1/{{ pki_mount }}/ca"
+    url: "{{ vault_addr }}/v1/{{ pki_mount }}/ca/pem"
     dest: "{{ pki_directory }}/ca.pem"
     mode: '0644'
     validate_certs: no
