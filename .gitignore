@@ -48,3 +48,6 @@ terraform.rc
 
 # Ignore local certificates and keys
 pki/
+
+# Ignore local KubeConfig files
+kubeconfigs/
