@@ -1,0 +1,5 @@
+# PKI Certificates to transfer to worker nodes
+certs_to_transfer:
+  - ca.pem
+  - kube_apiserver.pem
+  - kube_apiserver-key.pem
