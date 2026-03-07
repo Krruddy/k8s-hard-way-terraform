@@ -1,0 +1,3 @@
+- name: Generate Kubeconfig files for the Kubernetes Cluster
+  ansible.builtin.import_tasks: kubeconfigs.yml
+  tags: kubeconfig
