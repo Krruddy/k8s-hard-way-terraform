@@ -114,6 +114,7 @@ k8s_components:
       - "kubernetes.default.svc.cluster"
       - "kubernetes.svc.cluster.local"
       - "api-k8s-ctrl-1.kubernetes.local"
+      - "k8s-ctrl-1.kubernetes.local"
       - "localhost"
     san_ips: 
       - "10.32.0.1"
