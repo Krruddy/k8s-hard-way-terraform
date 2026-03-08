@@ -22,6 +22,9 @@
     src: etcd.service.j2
     dest: /etc/systemd/system/etcd.service
     mode: '0644'
+  vars:
+    name: "{{ inventory_hostname }}"
+
 
 - name: Enable and Start etcd Service
   ansible.builtin.systemd:

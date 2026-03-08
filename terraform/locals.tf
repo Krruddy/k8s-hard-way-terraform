@@ -18,12 +18,24 @@ locals {
         "kubernetes.default.svc",
         "kubernetes.default.svc.cluster",
         "kubernetes.svc.cluster.local",
-        "server.kubernetes.local",
-        "api-server.kubernetes.local",
+        "k8s-ctrl-1.kubernetes.local",
+        "api-k8s-ctrl-1.kubernetes.local",
         "localhost"
       ]
       allow_subdomains  = true
       server_flag       = true
+    }
+
+    "etcd" = {
+      allowed_domains   = [
+        "kubernetes",
+        "k8s-etcd-1.kubernetes.local",
+        "etcd",
+        "k8s-ctrl-1.kubernetes.local",
+        "localhost"
+      ]
+      server_flag       = true
+      client_flag       = false
     }
 
     "admin" = {

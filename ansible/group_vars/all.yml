@@ -106,14 +106,29 @@ k8s_components:
     vault_role: "kubernetes-api-server"
     cn: "kubernetes"
     gen_kubeconfig: false
-    kubeconfig_server: "https://server.kubernetes.local:6443"
+    kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
     san_dns: 
       - "kubernetes"
       - "kubernetes.default"
       - "kubernetes.default.svc"
       - "kubernetes.default.svc.cluster"
       - "kubernetes.svc.cluster.local"
-      - "api-server.kubernetes.local"
+      - "api-k8s-ctrl-1.kubernetes.local"
+      - "localhost"
+    san_ips: 
+      - "10.32.0.1"
+      - "127.0.0.1"
+      - "10.0.0.1"
+  etcd:
+    cert_name: "etcd"
+    vault_role: "kubernetes-etcd"
+    cn: "etcd"
+    gen_kubeconfig: false
+    san_dns: 
+      - "etcd"
+      - "k8s-etcd-1.kubernetes.local"
+      - "kubernetes"
+      - "k8s-ctrl-1.kubernetes.local"
       - "localhost"
     san_ips: 
       - "10.32.0.1"
@@ -125,7 +140,7 @@ k8s_components:
     cn: "system:kube-controller-manager"
     kubeconfig_user: "system:kube-controller-manager"
     gen_kubeconfig: true
-    kubeconfig_server: "https://server.kubernetes.local:6443"
+    kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
     san_dns: 
       - "kube-controller-manager"
     san_ips: 
@@ -136,7 +151,7 @@ k8s_components:
     cn: "system:kube-scheduler"
     kubeconfig_user: "system:kube-scheduler"
     gen_kubeconfig: true
-    kubeconfig_server: "https://server.kubernetes.local:6443"
+    kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
     san_dns: 
       - "kube-scheduler"
     san_ips: 
@@ -147,7 +162,7 @@ k8s_components:
     cn: "system:kube-proxy"
     kubeconfig_user: "system:kube-proxy"
     gen_kubeconfig: true
-    kubeconfig_server: "https://server.kubernetes.local:6443"
+    kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
     san_dns: 
       - "kube-proxy"
     san_ips: 
@@ -164,5 +179,5 @@ worker_k8s_component:
   cn_tmp: "system:node:"
   san_ips: "127.0.0.1"
   dest_dir_suffix: "workers"
-  kubeconfig_server: "https://server.kubernetes.local:6443"
+  kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
 

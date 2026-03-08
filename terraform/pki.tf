@@ -57,7 +57,7 @@ resource "vault_pki_secret_backend_role" "k8s_roles" {
   client_flag       = lookup(each.value, "client_flag", local.role_defaults.client_flag)
 
   allowed_domains = lookup(each.value, "allowed_domains", local.role_defaults.allowed_domains)
-  allow_subdomains   = lookup(each.value, "allow_subomains", local.role_defaults.allow_subdomains)
+  allow_subdomains   = lookup(each.value, "allow_subdomains", local.role_defaults.allow_subdomains)
   allow_bare_domains = lookup(each.value, "allow_bare_domains", local.role_defaults.allow_bare_domains)
   
 
