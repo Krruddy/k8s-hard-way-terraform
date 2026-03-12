@@ -27,16 +27,28 @@ variable "vault_secret_id" {
   description = "The Secret ID for Vault AppRole authentication."
 }
 
-variable "pki_path" {
-  description = "Path where the PKI engine will be mounted"
+variable "pki_path_kubernetes" {
+  description = "Path where the PKI engine will be mounted for the main Kubernetes CA"
   type        = string
-  default     = "pki"
+  default     = "pki/kubernetes/root-ca"
+}
+
+variable "pki_path_aggregation_layer" {
+  description = "Path where the PKI engine will be mounted for the aggregation layer CA"
+  type        = string
+  default     = "pki/kubernetes/aggregation-layer-ca"
 }
 
 variable "common_name" {
   description = "The Common Name (CN) for the Root CA"
   type        = string
   default     = "Kubernetes CA"
+}
+
+variable "common_name_aggregation_layer" {
+  description = "The Common Name (CN) for the Root CA of the aggregation layer"
+  type        = string
+  default     = "Kubernetes Aggregation Layer CA"
 }
 
 variable "ca_ttl" {

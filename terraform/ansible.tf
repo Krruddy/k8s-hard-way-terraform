@@ -12,8 +12,12 @@ path "auth/token/create"
 path "ssh-client-signer/sign/ansible-signer" {
   capabilities = ["update", "read"]
 }
-# Allow signing of certificates using the 'kubernetes' role
-path "pki/issue/*" {
+# Allow signing of certificates using the main Kubernetes CA
+path "${var.pki_path_kubernetes}/issue/*" {
+  capabilities = ["update", "read"]
+}
+# Allow signing of certificates using the aggregation layer CA
+path "${var.pki_path_aggregation_layer}/issue/*" {
   capabilities = ["update", "read"]
 }
 EOT
