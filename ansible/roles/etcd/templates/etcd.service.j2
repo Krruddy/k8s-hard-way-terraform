@@ -8,7 +8,7 @@ ExecStart=/usr/local/bin/etcd \
   --name {{ name }} \
   --cert-file=/etc/etcd/etcd.pem \
   --key-file=/etc/etcd/etcd-key.pem \
-  --trusted-ca-file=/etc/etcd/ca.pem \
+  --trusted-ca-file=/etc/etcd/{{ certificate_authorities.kubernetes_ca.name }} \
   --client-cert-auth \
   --initial-advertise-peer-urls http://127.0.0.1:2380 \
   --listen-peer-urls http://127.0.0.1:2380 \

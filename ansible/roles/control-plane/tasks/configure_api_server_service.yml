@@ -9,7 +9,10 @@
     src: "{{ pki_directory }}/{{ item }}"
     dest: "/var/lib/kubernetes/{{ item }}"
   loop: 
-    - ca.pem
+    - "{{ certificate_authorities.kubernetes_ca.name }}"
+    - "{{ certificate_authorities.kubernetes_aggregation_layer_ca.name }}"
+    - kubernetes-aggregation-layer.pem
+    - kubernetes-aggregation-layer-key.pem
     - kube-apiserver.pem
     - kube-apiserver-key.pem
     - service-accounts.pem    
