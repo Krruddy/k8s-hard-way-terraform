@@ -7,5 +7,4 @@ vault_cacert: "{{ lookup('env', 'VAULT_CACERT') }}"
 vault_token: "{{ lookup('env', 'VAULT_TOKEN') }}"
 
 # Global defaults
-pki_mount: "pki"
 cert_ttl: "876h"

@@ -1,5 +1,5 @@
 # PKI Certificates to transfer to worker nodes
 certs_to_transfer:
-  - ca.pem
+  - "{{ certificate_authorities.kubernetes_ca.name }}"
   - etcd.pem
   - etcd-key.pem

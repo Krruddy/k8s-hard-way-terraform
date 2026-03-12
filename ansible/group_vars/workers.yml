@@ -3,4 +3,4 @@ k8s_binary_list: "{{ k8s_binaries.worker }}"
 
 # PKI Certificates to transfer to worker nodes
 certs_to_transfer:
-  - ca.pem
+  - "{{ certificate_authorities.kubernetes_ca.name }}"

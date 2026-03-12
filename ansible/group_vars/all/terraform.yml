@@ -1,0 +1,13 @@
+---
+aggregation_layer_k8s_component:
+  vault_role: "kubernetes-aggregation-layer"
+  cert_final_path: "/var/lib/kubernetes"
+  cn: "kubernetes-aggregation-layer"
+
+certificate_authorities:
+  kubernetes_ca: 
+    path: pki/kubernetes/root-ca
+    name: ca.pem
+  kubernetes_aggregation_layer_ca: 
+    path: pki/kubernetes/aggregation-layer-ca
+    name: ca-aggregation-layer.pem
