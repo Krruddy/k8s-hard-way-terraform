@@ -2,7 +2,7 @@
   community.hashi_vault.vault_pki_generate_certificate:
     url: "{{ vault_addr }}"
     token: "{{ vault_token }}"
-    mount_point: "{{ pki_mount }}"
+    engine_mount_point: "{{ certificate_authorities.kubernetes_ca.path }}"
     
     role_name: "{{ worker_k8s_component.vault_role }}"
     common_name: "system:node:{{ item }}"

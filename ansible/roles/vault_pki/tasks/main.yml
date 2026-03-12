@@ -4,21 +4,26 @@
     state: directory
     mode: '0755'
   tags: 
-    - pull_ca_certificate
+    - pull_ca_certificates
     - worker_certificates
     - other_certificates
 
-- name: Pull the CA Certificate from Vault
+- name: Pull the CA Certificates from Vault
   ansible.builtin.get_url:
-    url: "{{ vault_addr }}/v1/{{ pki_mount }}/ca/pem"
-    dest: "{{ pki_directory }}/ca.pem"
+    url: "{{ vault_addr }}/v1/{{ item.value.path }}/ca/pem"
+    dest: "{{ pki_directory }}/{{ item.value.name }}"
     mode: '0644'
     validate_certs: no
-  tags: pull_ca_certificate
+  tags: pull_ca_certificates
+  loop: "{{ certificate_authorities | dict2items }}"
 
 - name: Generate the Workers Kubernetes Certificates
   ansible.builtin.import_tasks: worker_certificates.yml
   tags: worker_certificates
+
+- name: Generate the Aggregation Layer Kubernetes Certificate
+  ansible.builtin.import_tasks: aggregation_layer_certificate.yml
+  tags: aggregation_layer_certificate
 
 - name: Generate the rest of the Kubernetes Certificates
   ansible.builtin.import_tasks: other_certificates.yml
