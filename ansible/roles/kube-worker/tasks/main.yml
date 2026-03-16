@@ -1,0 +1,52 @@
+- name: Setup Kubernetes Worker Binaries
+  become: true
+  tags: install_kubernetes_binaries_workers
+  block:
+    - name: Ensure Kubernetes Binary Directory exists
+      ansible.builtin.file:
+        path: "{{ k8s_download_dest }}/{{ k8s_version }}"
+        state: directory
+        mode: '0755'
+    - name: Install Worker Binaries 
+      ansible.builtin.include_tasks: 
+        file: roles/common/tasks/install_k8s_binary.yml
+        apply:
+          tags: [install_binaries_workers]
+      vars:
+        binary_item: "{{ item }}"
+      loop: "{{ k8s_binary_list }}"
+
+- name: Disable swap on Worker Nodes
+  become: yes
+  ansible.builtin.import_tasks: disable_swap.yml
+  tags: disable_swap_workers
+
+- name: Configure the Container Network Interface (CNI) Plugin
+  become: yes
+  ansible.builtin.import_tasks: configure_cni_plugin.yml
+  tags: configure_cni_plugin
+
+- name: Configure the Containerd Service
+  become: yes
+  ansible.builtin.import_tasks: configure_containerd_service.yml
+  tags: configure_containerd_service
+
+- name: Configure the Container Runtime Interface (CRI) Service
+  become: yes
+  ansible.builtin.import_tasks: configure_container_runtime_interface_service.yml
+  tags: configure_container_runtime_interface_service
+
+- name: Configure the Run Container (RunC) Service
+  become: yes
+  ansible.builtin.import_tasks: configure_runc_service.yml
+  tags: configure_runc_service
+
+- name: Configure Kubernetes Proxy Service
+  become: yes
+  ansible.builtin.import_tasks: configure_proxy_service.yml
+  tags: configure_proxy_service
+
+- name: Configure Kubernetes Kubelet Service
+  become: yes
+  ansible.builtin.import_tasks: configure_kubelet_service.yml
+  tags: configure_kubelet_service
