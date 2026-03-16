@@ -30,4 +30,3 @@
   become: yes
   ansible.builtin.import_tasks: configure_scheduler_service.yml
   tags: configure_scheduler_service
-
