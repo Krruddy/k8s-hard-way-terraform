@@ -60,24 +60,28 @@ downloads:
     dest: "/opt"
     mode: "0644"
   containerd:
-    url: "https://github.com/containerd/containerd/releases/download/{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ arch }}.tar.gz"
+    url: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ arch }}.tar.gz"
+    tarball_name: "containerd-{{ containerd_version }}-linux-{{ arch }}.tar.gz"
     checksum: "sha256:f5d8e90ecb6c1c7e33ecddf8cc268a93b9e5b54e0e850320d765511d76624f41"
-    dest: "/tmp"
+    tarball_dest: "/opt/containerd/bin"
     mode: "0644"
   cni_plugins:
     url: "https://github.com/containernetworking/plugins/releases/download/{{ cni_version }}/cni-plugins-linux-{{ arch }}-{{ cni_version }}.tgz"
+    tarball_name: "cni-plugins-linux-{{ arch }}-{{ cni_version }}.tgz"
     checksum: "sha256:58c03705426e929658f45a851df15a86d06ef680cacbf3f2dc127731ca265c28"
-    dest: "/opt/cni/bin" # CNI plugins are often extracted directly here
+    tarball_dest: "/opt/cni/bin"
     mode: "0644"
   crictl:
     url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-{{ arch }}.tar.gz"
+    tarball_name: "crictl-{{ crictl_version }}-linux-{{ arch }}.tar.gz"
     checksum: "sha256:2e141e5b22cb189c40365a11807d69b76b9b3caced89fac2f4ec879408ce2177"
-    dest: "/usr/local/bin"
+    tarball_dest: "/opt/crictl/bin"
     mode: "0644"
   runc:
     url: "https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.{{ arch }}"
+    name: "runc.{{ arch }}"
     checksum: "sha256:c5d4995c5aec204d7e1827d9d9a6b45042602736f7f415f484252e576dcdac28"
-    dest: "/usr/local/bin/runc" # Runc is a binary, not a tarball
+    tarball_dest: "/opt/runc/bin"
     mode: "0755"
 
 # ====================================================
