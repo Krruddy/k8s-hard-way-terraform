@@ -8,5 +8,8 @@
       - socat      
       - conntrack 
       - ipset    
+      - kmod
+      - python3-pip
+      - python3-kubernetes
     state: present
     update_cache: true
