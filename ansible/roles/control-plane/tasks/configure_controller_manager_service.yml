@@ -2,6 +2,7 @@
   ansible.builtin.file:
     path: "/var/lib/kubernetes"
     state: directory
+    force: true
     #mode: '0700' # Commented out because no restrictions are provided in the guide
 
 - name: Copy Kubeconfig for Controller Manager

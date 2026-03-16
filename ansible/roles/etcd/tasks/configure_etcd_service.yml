@@ -3,6 +3,7 @@
     path: /etc/etcd
     state: directory
     mode: '0755'
+    force: true
 
 - name: Copy Certificates for etcd
   ansible.builtin.copy:
@@ -16,6 +17,7 @@
     path: "/var/lib/etcd"
     state: directory
     mode: '0700'
+    force: true
 
 - name: Configure etcd Systemd Service
   ansible.builtin.template:
