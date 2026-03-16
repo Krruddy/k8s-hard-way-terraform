@@ -1,0 +1,35 @@
+- name: Create Kubernetes Kubelet Data Directory
+  ansible.builtin.file:
+    path: "/var/lib/kubelet"
+    state: directory
+    mode: '0755'
+
+- name: Copy Kubeconfig for Kubelet
+  ansible.builtin.copy:
+    src: "{{ kubeconfig_directory }}/{{ inventory_hostname }}.kubeconfig"
+    dest: "/var/lib/kubelet/kubelet.kubeconfig"
+
+- name: Configure Kubernetes Kubelet Systemd Service
+  ansible.builtin.template:
+    src: kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+    mode: '0644'
+
+- name: Copy Certificates for the Kubelet Service
+  ansible.builtin.copy:
+    src: "{{ pki_directory }}/{{ item }}"
+    dest: "/var/lib/kubelet/{{ item }}"
+  loop: "{{ certs_to_transfer }}"
+
+- name: Copy Kubernetes Kubelet Configuration File
+  ansible.builtin.template:
+    src: kubelet-config.yaml.j2
+    dest: "/var/lib/kubelet/kubelet-config.yaml"
+    mode: '0644'
+
+- name: Enable and Start Kubernetes Kubelet Service
+  ansible.builtin.systemd:
+    name: kubelet
+    state: started
+    enabled: true
+    daemon_reload: true

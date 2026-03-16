@@ -1,0 +1,26 @@
+- name: Create versioned binary directory RunC
+  ansible.builtin.file:
+    path: "{{ downloads.runc.tarball_dest }}/{{ runc_version }}"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Download runc Binary
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ downloads.runc.url }}"
+    dest: "{{ downloads.runc.tarball_dest }}/{{ runc_version }}/{{ downloads.runc.name }}"
+    checksum: "{{ downloads.runc.checksum }}"
+    mode: "{{ downloads.runc.mode }}"
+
+- name: Make the runc Binary Executable
+  ansible.builtin.file:
+    path: "{{ downloads.runc.tarball_dest }}/{{ runc_version }}/{{ downloads.runc.name }}"
+    mode: '0755'
+
+- name: Symlink runc Binary to system PATH
+  ansible.builtin.file:
+    src: "{{ downloads.runc.tarball_dest }}/{{ runc_version }}/{{ downloads.runc.name }}"
+    dest: "/usr/local/bin/{{ downloads.runc.name | replace('.amd64', '') }}"
+    state: link
+    force: true
