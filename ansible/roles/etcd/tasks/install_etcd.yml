@@ -11,8 +11,6 @@
     src: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}.tar.gz"
     dest: "{{ downloads.etcd.dest }}"
     remote_src: true
-    # To only extract if not already extracted
-    creates: "{{ downloads.etcd.dest }}/etcd-{{ etcd_version }}-linux-{{ arch }}/etcd"
   register: etcd_extracted
 
 - name: Symlink etcd binaries to system path
