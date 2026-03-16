@@ -45,3 +45,21 @@
     state: started
     enabled: true
     daemon_reload: true
+
+- name: Copy Kubeconfig for admin User to API Server
+  ansible.builtin.copy:
+    src: "{{ kubeconfig_directory }}/admin.kubeconfig"
+    dest: "/var/lib/kubernetes/admin.kubeconfig"
+    mode: '0644'
+
+- name: Deploy RBAC Configuration for API Server to Kubelet Communication
+  ansible.builtin.template:
+    src: kube-apiserver-to-kubelet.yaml.j2
+    dest: "/var/lib/kubernetes/kube-apiserver-to-kubelet.yaml"
+    mode: '0644'
+
+- name: Apply kube-apiserver-to-kubelet RBAC Configuration
+  kubernetes.core.k8s:
+    kubeconfig: "/var/lib/kubernetes/admin.kubeconfig"
+    src: "/var/lib/kubernetes/kube-apiserver-to-kubelet.yaml"
+    state: present
