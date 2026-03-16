@@ -185,4 +185,3 @@ worker_k8s_component:
   san_ips: "127.0.0.1"
   dest_dir_suffix: "workers"
   kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443"
-
