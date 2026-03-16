@@ -41,8 +41,8 @@
   hosts: controllers
   roles: [control-plane]
   tags: control_plane_setup
-#
-#- name: Bootstrap Workers
-#  hosts: workers
-#  roles: [kube-worker]
-#  tags: worker_setup
+
+- name: Bootstrap Workers
+  hosts: workers
+  roles: [kube-worker]
+  tags: worker_setup
