@@ -1,0 +1,77 @@
+- name: Create versioned binary directory and extraction directory for CNI plugins
+  ansible.builtin.file:
+    path: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Download Container Network Interface (CNI) Plugin Tarball
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ downloads.cni_plugins.url }}"
+    dest: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name }}"
+    checksum: "{{ downloads.cni_plugins.checksum }}"
+    mode: "{{ downloads.cni_plugins.mode }}"
+
+- name: Extract Container Network Interface (CNI) Plugin Binaries
+  ansible.builtin.unarchive:
+    src: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name }}"
+    dest: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    remote_src: true
+  register: etcd_extracted
+
+- name: Find CNI plugin binaries (excluding README and LICENSE)
+  ansible.builtin.find:
+    paths: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    file_type: file
+    excludes:
+      - "README*"
+      - "LICENSE*"
+  register: cni_binaries
+
+- name: Symlink Container Network Interface (CNI) Binaries to system PATH
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ cni_binaries.files }}"
+
+- name: Create Container Network Interface (CNI) Plugin Configuration Directory
+  ansible.builtin.file:
+    path: "/etc/cni/net.d"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Copy CNI Plugin Configuration Files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/cni/net.d/{{ item | regex_replace('.j2$', '') }}"
+    mode: '0644'
+  loop: 
+    - 10-bridge.conf.j2
+    - 99-loopback.conf.j2
+
+- name: Load br_netfilter kernel module immediately
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Ensure br_netfilter persists on reboot
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/k8s.conf
+    content: "br_netfilter"
+    mode: '0644'
+
+- name: Configure kernel parameters for Kubernetes bridging
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.d/kubernetes.conf
+    sysctl_set: true 
+    reload: yes
+  loop:
+    - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+    - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }

@@ -1,0 +1,60 @@
+- name: Create versioned binary directory and extraction directory for Containerd
+  ansible.builtin.file:
+    path: "{{ downloads.containerd.tarball_dest }}/{{ containerd_version }}/{{ downloads.containerd.tarball_name | regex_replace('.tar.gz$', '') }}"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Download Containerd Tarball
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ downloads.containerd.url }}"
+    dest: "{{ downloads.containerd.tarball_dest }}/{{ containerd_version }}/{{ downloads.containerd.tarball_name }}"
+    checksum: "{{ downloads.containerd.checksum }}"
+    mode: "{{ downloads.containerd.mode }}"
+
+- name: Extract Containerd Binaries
+  ansible.builtin.unarchive:
+    src: "{{ downloads.containerd.tarball_dest }}/{{ containerd_version }}/{{ downloads.containerd.tarball_name }}"
+    dest: "{{ downloads.containerd.tarball_dest }}/{{ containerd_version }}/{{ downloads.containerd.tarball_name | regex_replace('.tar.gz$', '') }}"
+    remote_src: true
+
+- name: Find Containerd binaries
+  ansible.builtin.find:
+    paths: "{{ downloads.containerd.tarball_dest }}/{{ containerd_version }}/{{ downloads.containerd.tarball_name | regex_replace('.tar.gz$', '') }}/bin"
+    file_type: file
+  register: containerd_binaries
+
+- name: Symlink Containerd Binaries to system PATH
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ containerd_binaries.files }}"
+
+- name: Create Containerd Config Directory
+  ansible.builtin.file:
+    path: "/etc/containerd"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Copy Containerd Configuration File
+  ansible.builtin.template:
+    src: containerd-config.toml.j2
+    dest: "/etc/containerd/config.toml"
+    mode: '0644'
+
+- name: Configure Containerd Systemd Service
+  ansible.builtin.template:
+    src: containerd.service.j2
+    dest: /etc/systemd/system/containerd.service
+    mode: '0644'
+
+- name: Enable and Start Containerd Service
+  ansible.builtin.systemd:
+    name: containerd
+    state: started
+    enabled: true
+    daemon_reload: true

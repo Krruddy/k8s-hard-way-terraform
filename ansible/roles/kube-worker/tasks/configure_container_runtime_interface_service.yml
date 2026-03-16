@@ -1,0 +1,34 @@
+- name: Create versioned binary directory and extraction directory for Container Runtime Interface (CRI)
+  ansible.builtin.file:
+    path: "{{ downloads.crictl.tarball_dest }}/{{ crictl_version }}/{{ downloads.crictl.tarball_name | regex_replace('.tar.gz$', '') }}"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Download Container Runtime Interface (CRI) Tarball
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ downloads.crictl.url }}"
+    dest: "{{ downloads.crictl.tarball_dest }}/{{ crictl_version }}/{{ downloads.crictl.tarball_name }}"
+    checksum: "{{ downloads.crictl.checksum }}"
+    mode: "{{ downloads.crictl.mode }}"
+
+- name: Extract Container Runtime Interface (CRI) Binary
+  ansible.builtin.unarchive:
+    src: "{{ downloads.crictl.tarball_dest }}/{{ crictl_version }}/{{ downloads.crictl.tarball_name }}"
+    dest: "{{ downloads.crictl.tarball_dest }}/{{ crictl_version }}/{{downloads.crictl.tarball_name | regex_replace('.tar.gz$', '') }}"
+    remote_src: true
+
+- name: Find Container Runtime Interface (CRI) binary
+  ansible.builtin.find:
+    paths: "{{ downloads.crictl.tarball_dest }}/{{ crictl_version }}/{{ downloads.crictl.tarball_name | regex_replace('.tar.gz$', '') }}"
+    file_type: file
+  register: crictl_binaries
+
+- name: Symlink Container Runtime Interface (CRI) Binary to system PATH
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/{{ item.path | basename }}"
+    state: link
+    force: true
+  loop: "{{ crictl_binaries.files }}"
