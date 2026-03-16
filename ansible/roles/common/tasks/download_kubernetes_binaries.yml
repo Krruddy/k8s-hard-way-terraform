@@ -3,6 +3,7 @@
     path: "/opt/kubernetes/bin/{{ k8s_version }}"
     state: directory
     mode: '0755'
+    force: true
 
 - name: Download K8s Binaries
   ansible.builtin.get_url:
