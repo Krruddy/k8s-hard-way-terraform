@@ -179,13 +179,13 @@ variable "k8s_ctrl_count" {
 variable "k8s_ctrl_cpu_cores" {
   description = "CPU cores for controller nodes"
   type        = number
-  default     = 2
+  default     = 6
 }
 
 variable "k8s_ctrl_memory" {
   description = "Memory (MB) for controller nodes"
   type        = number
-  default     = 4096
+  default     = 8192
 }
 
 # --- Kubernetes Worker Node Variables ---
@@ -198,7 +198,7 @@ variable "k8s_wkr_id_start" {
 variable "k8s_wkr_count" {
   description = "Number of worker nodes"
   type        = number
-  default     = 8
+  default     = 6
 }
 
 variable "k8s_wkr_cpu_cores" {

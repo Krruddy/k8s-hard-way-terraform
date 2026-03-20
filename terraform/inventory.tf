@@ -45,10 +45,10 @@ aggregation_layer_k8s_component:
   cn: "kubernetes-aggregation-layer"
 
 certificate_authorities:
-  - kubernetes_ca: 
+  kubernetes_ca: 
     path: ${vault_mount.kubernetes_pki.path}
     name: ca.pem
-  - kubernetes_aggregation_layer_ca: 
+  kubernetes_aggregation_layer_ca: 
     path: ${vault_mount.aggregation_layer_pki.path}
     name: ca-aggregation-layer.pem
 EOT
