@@ -1,3 +1,27 @@
 - name: Gateway Firewall Rules
   become: yes
   ansible.builtin.import_tasks: firewall.yml
+  tags: default_firewall_gateway
+
+- name: Distribute Administrator's Kubeconfig file to Gateway
+  become: yes
+  ansible.builtin.import_tasks: distribute_kubeconfig_gateway.yml
+  tags: distribute_kubeconfig_gateway
+
+- name: Setup Kubernetes Gateway Binaries
+  become: true
+  tags: install_kubernetes_binaries_gateway
+  block:
+    - name: Ensure Kubernetes Binary Directory exists
+      ansible.builtin.file:
+        path: "{{ k8s_download_dest }}/{{ k8s_version }}"
+        state: directory
+        mode: '0755'
+    - name: Install Gateway Binaries 
+      ansible.builtin.include_tasks: 
+        file: roles/common/tasks/install_k8s_binary.yml
+        apply:
+          tags: [install_binaries_gateway]
+      vars:
+        binary_item: "{{ item }}"
+      loop: "{{ k8s_binary_list }}"
