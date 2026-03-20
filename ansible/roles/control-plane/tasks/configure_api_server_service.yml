@@ -63,3 +63,5 @@
     kubeconfig: "/var/lib/kubernetes/admin.kubeconfig"
     src: "/var/lib/kubernetes/kube-apiserver-to-kubelet.yaml"
     state: present
+  retries: 5
+  delay: 10

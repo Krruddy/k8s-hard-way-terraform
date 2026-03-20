@@ -15,3 +15,4 @@ certs_to_transfer:
   - kube-apiserver-key.pem
   - service-accounts.pem    
   - service-accounts-key.pem
+

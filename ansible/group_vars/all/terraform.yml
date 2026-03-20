@@ -1,6 +1,6 @@
 ---
 aggregation_layer_k8s_component:
-  vault_role: "kubernetes-aggregation-layer"
+  vault_role: kubernetes-aggregation-layer
   cert_final_path: "/var/lib/kubernetes"
   cn: "kubernetes-aggregation-layer"
 

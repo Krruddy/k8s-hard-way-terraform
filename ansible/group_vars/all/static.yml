@@ -104,7 +104,7 @@ k8s_components:
     cn: "kubernetes-super-admin"
     kubeconfig_user: "admin"
     gen_kubeconfig: true
-    kubeconfig_server: "https://127.0.0.1:6443" 
+    kubeconfig_server: "https://k8s-ctrl-1.kubernetes.local:6443" 
   kube-apiserver:
     cert_name: "kube-apiserver"
     vault_role: "kubernetes-api-server"

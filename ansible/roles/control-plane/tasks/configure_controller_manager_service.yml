@@ -10,6 +10,14 @@
     src: "{{ kubeconfig_directory }}/controller-manager.kubeconfig"
     dest: "/var/lib/kubernetes/controller-manager.kubeconfig"
 
+- name: Copy Certificates for the Controller Manager
+  ansible.builtin.copy:
+    src: "{{ pki_directory }}/{{ item }}"
+    dest: "/var/lib/kubernetes/{{ item }}"
+  loop: 
+    - controller-manager.pem
+    - controller-manager-key.pem
+
 - name: Configure Controller Manager Systemd Service
   ansible.builtin.template:
     src: kube-controller-manager.service.j2
