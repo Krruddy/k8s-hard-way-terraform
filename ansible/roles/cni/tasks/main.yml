@@ -1,0 +1,130 @@
+- name: Create versioned binary directory and extraction directory for CNI plugins
+  ansible.builtin.file:
+    path: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    state: directory
+    mode: '0755'
+    force: true
+
+- name: Download Container Network Interface (CNI) Plugin Tarball
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ downloads.cni_plugins.url }}"
+    dest: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name }}"
+    checksum: "{{ downloads.cni_plugins.checksum }}"
+    mode: "{{ downloads.cni_plugins.mode }}"
+
+- name: Extract Container Network Interface (CNI) Plugin Binaries
+  ansible.builtin.unarchive:
+    src: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name }}"
+    dest: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    remote_src: true
+  register: etcd_extracted
+
+- name: Find CNI plugin binaries (excluding README and LICENSE)
+  ansible.builtin.find:
+    paths: "{{ downloads.cni_plugins.tarball_dest }}/{{ cni_version }}/{{ downloads.cni_plugins.tarball_name | regex_replace('.tgz$', '') }}"
+    file_type: file
+    excludes:
+      - "README*"
+      - "LICENSE*"
+  register: cni_binaries
+
+- name: Symlink Container Network Interface (CNI) Binaries to system PATH
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ downloads.cni_plugins.execs_dest }}/{{ item.path | basename }}"
+    state: link
+    force: true
+  become: true
+  loop: "{{ cni_binaries.files }}"
+
+- name: Fetch Node data from Kubernetes API
+  kubernetes.core.k8s_info:
+    kind: Node
+    kubeconfig: "/home/admin/.kube/config"
+  register: k8s_nodes
+  delegate_to: "{{ groups['gateway'][0] }}"
+  run_once: true
+  become: true
+
+- name: Construct cluster networking facts
+  ansible.builtin.set_fact:
+    cluster_network_map: >-
+      {{
+        cluster_network_map | default({}) | combine({
+          item.metadata.name: {
+            'pod_cidr': item.spec.podCIDR,
+            'internal_ip': (item.status.addresses | selectattr('type', 'equalto', 'InternalIP') | first).address
+          }
+        })
+      }}
+  loop: "{{ k8s_nodes.resources }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Display the parsed cluster network map
+  ansible.builtin.debug:
+    var: cluster_network_map
+  run_once: true
+
+- name: Create Container Network Interface (CNI) Plugin Configuration Directory
+  become: true
+  ansible.builtin.file:
+    path: "/etc/cni/net.d"
+    state: directory
+    mode: '0755'
+
+- name: Copy CNI Plugin Configuration Files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/cni/net.d/{{ item | regex_replace('.j2$', '') }}"
+    mode: '0644'
+  vars:
+    local_pod_cidr: "{{ cluster_network_map[inventory_hostname].pod_cidr }}"
+  become: true
+  loop: 
+    - 10-bridge.conf.j2
+    - 99-loopback.conf.j2
+
+- name: Restart containerd
+  become: true
+  ansible.builtin.systemd:
+    name: containerd
+    state: restarted
+
+- name: Add static routes for peer Pod CIDRs
+  become: true
+  ansible.builtin.command:
+    cmd: "ip route add {{ item.value.pod_cidr }} via {{ item.value.internal_ip }}"
+  # Loop through the dictionary we built in Step 2
+  loop: "{{ cluster_network_map | dict2items }}"
+  # Skip adding a route to ourselves
+  when: item.key != inventory_hostname
+  register: route_result
+  # Safely ignore "File exists" if the route is already present
+  failed_when:
+    - route_result.rc != 0
+    - "'File exists' not in route_result.stderr"
+
+- name: Load br_netfilter kernel module immediately
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Ensure br_netfilter persists on reboot
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/k8s.conf
+    content: "br_netfilter"
+    mode: '0644'
+
+- name: Configure kernel parameters for Kubernetes bridging
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.d/kubernetes.conf
+    sysctl_set: true 
+    reload: yes
+  loop:
+    - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+    - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
