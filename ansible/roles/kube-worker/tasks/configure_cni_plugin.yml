@@ -32,7 +32,7 @@
 - name: Symlink Container Network Interface (CNI) Binaries to system PATH
   ansible.builtin.file:
     src: "{{ item.path }}"
-    dest: "/usr/local/bin/{{ item.path | basename }}"
+    dest: "{{ execs_dest }}/{{ item.path | basename }}"
     state: link
     force: true
   loop: "{{ cni_binaries.files }}"

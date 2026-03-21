@@ -70,6 +70,7 @@ downloads:
     tarball_name: "cni-plugins-linux-{{ arch }}-{{ cni_version }}.tgz"
     checksum: "sha256:58c03705426e929658f45a851df15a86d06ef680cacbf3f2dc127731ca265c28"
     tarball_dest: "/opt/cni/bin"
+    execs_dest: "/opt/cni/bin"
     mode: "0644"
   crictl:
     url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-{{ arch }}.tar.gz"
