@@ -45,4 +45,13 @@
 - name: Bootstrap Workers
   hosts: workers
   roles: [kube-worker]
-  tags: worker_setup
+  tags: 
+    - worker_setup
+    - bootstrap_workers
+
+- name: CNI Setup
+  hosts: workers
+  roles: [cni]
+  tags: 
+    - worker_setup
+    - cni_setup
